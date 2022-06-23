@@ -1,0 +1,170 @@
+jobs:
+  stage_0_job_0:
+    name: camera-calibration-parsers tracetools-image-pipeline ros-ign-interfaces
+      theora-image-transport compressed-image-transport
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs: []
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-camera-calibration-parsers ros-humble-tracetools-image-pipeline
+        ros-humble-ros-ign-interfaces ros-humble-theora-image-transport ros-humble-compressed-image-transport
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-camera-calibration-parsers ros-humble-tracetools-image-pipeline
+          ros-humble-ros-ign-interfaces ros-humble-theora-image-transport ros-humble-compressed-image-transport
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_0_job_1:
+    name: compressed-depth-image-transport pcl-ros filters image-rotate depth-image-proc
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs: []
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-compressed-depth-image-transport ros-humble-pcl-ros ros-humble-filters
+        ros-humble-image-rotate ros-humble-depth-image-proc
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-compressed-depth-image-transport ros-humble-pcl-ros
+          ros-humble-filters ros-humble-image-rotate ros-humble-depth-image-proc
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_0_job_2:
+    name: camera-calibration ros-ign-gazebo vision-opencv
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs: []
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-camera-calibration ros-humble-ros-ign-gazebo ros-humble-vision-opencv
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-camera-calibration ros-humble-ros-ign-gazebo ros-humble-vision-opencv
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_1_job_3:
+    name: camera-info-manager image-proc ros-ign-bridge image-view image-transport-plugins
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_0_job_0
+    - stage_0_job_1
+    - stage_0_job_2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-camera-info-manager ros-humble-image-proc ros-humble-ros-ign-bridge
+        ros-humble-image-view ros-humble-image-transport-plugins
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-camera-info-manager ros-humble-image-proc ros-humble-ros-ign-bridge
+          ros-humble-image-view ros-humble-image-transport-plugins
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_1_job_4:
+    name: perception-pcl laser-filters
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_0_job_0
+    - stage_0_job_1
+    - stage_0_job_2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-perception-pcl ros-humble-laser-filters
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-perception-pcl ros-humble-laser-filters
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_2_job_5:
+    name: stereo-image-proc image-publisher ros-ign-image image-common
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_1_job_3
+    - stage_1_job_4
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-stereo-image-proc ros-humble-image-publisher ros-humble-ros-ign-image
+        ros-humble-image-common
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-stereo-image-proc ros-humble-image-publisher ros-humble-ros-ign-image
+          ros-humble-image-common
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_3_job_6:
+    name: image-pipeline ros-ign-gazebo-demos simulation perception
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_2_job_5
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-image-pipeline ros-humble-ros-ign-gazebo-demos ros-humble-simulation
+        ros-humble-perception
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-image-pipeline ros-humble-ros-ign-gazebo-demos
+          ros-humble-simulation ros-humble-perception
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+  stage_4_job_7:
+    name: desktop-full
+    runs-on: macos-10.15
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_3_job_6
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-desktop-full
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-desktop-full
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx.sh
+on:
+  push:
+    branches:
+    - buildbranch_osx
