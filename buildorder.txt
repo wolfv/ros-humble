@@ -1,0 +1,6 @@
+ros-humble-ros-ign-bridge
+ros-humble-ros-ign-gazebo
+ros-humble-ros-ign-image
+ros-humble-ros-ign-gazebo-demos
+ros-humble-simulation
+ros-humble-desktop-full

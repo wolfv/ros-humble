@@ -1,0 +1,50 @@
+jobs:
+  stage_0_job_0:
+    name: ros-ign-bridge ros-ign-gazebo ros-ign-image
+    runs-on:
+    - self-hosted
+    - linux
+    - ARM64
+    strategy:
+      fail-fast: false
+    needs: []
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-ros-ign-bridge ros-humble-ros-ign-gazebo ros-humble-ros-ign-image
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-ros-ign-bridge ros-humble-ros-ign-gazebo ros-humble-ros-ign-image
+        DOCKER_IMAGE: condaforge/linux-anvil-aarch64
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/run_docker_build.sh
+  stage_1_job_1:
+    name: ros-ign-gazebo-demos simulation desktop-full
+    runs-on:
+    - self-hosted
+    - linux
+    - ARM64
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_0_job_0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build ros-humble-ros-ign-gazebo-demos ros-humble-simulation ros-humble-desktop-full
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-ros-ign-gazebo-demos ros-humble-simulation ros-humble-desktop-full
+        DOCKER_IMAGE: condaforge/linux-anvil-aarch64
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/run_docker_build.sh
+on:
+  push:
+    branches:
+    - buildbranch_linux_aarch64
