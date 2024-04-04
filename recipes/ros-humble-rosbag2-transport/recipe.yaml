@@ -1,0 +1,97 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+
+package:
+  name: ros-humble-rosbag2-transport
+  version: 0.15.9
+source:
+  git: https://github.com/ros2-gbp/rosbag2-release.git
+  rev: release/humble/rosbag2_transport/0.15.9-1
+  target_directory: ros-humble-rosbag2-transport/src/work
+
+build:
+  script: ${{ 'build_ament_cmake.sh' if unix else 'bld_ament_cmake.bat' }}
+  number: 5
+about:
+  homepage: https://www.ros.org/
+  license: BSD-3-Clause
+  summary: |
+    Robot Operating System
+
+extra:
+  recipe-maintainers:
+    - ros-forge
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ compiler('c') }}
+    - if: linux64
+      then:
+        - sysroot_linux-64 2.17
+    - ninja
+    - setuptools
+    - if: unix
+      then:
+        - make
+        - coreutils
+    - if: osx
+      then:
+        - tapi
+    - if: build_platform != target_platform
+      then:
+        - pkg-config
+    - cmake
+    - cython
+    - if: build_platform != target_platform
+      then:
+        - python
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+    - if: build_platform != target_platform
+      then:
+        - numpy
+  host:
+    - if: build_platform == target_platform
+      then:
+        - pkg-config
+    - numpy
+    - pip
+    - python
+    - ros-humble-ament-cmake-gmock
+    - ros-humble-ament-cmake-ros
+    - ros-humble-ament-index-cpp
+    - ros-humble-ament-lint-auto
+    - ros-humble-ament-lint-common
+    - ros-humble-keyboard-handler
+    - ros-humble-rclcpp
+    - ros-humble-rmw
+    - ros-humble-rmw-implementation-cmake
+    - ros-humble-ros-environment
+    - ros-humble-ros-workspace
+    - ros-humble-rosbag2-compression
+    - ros-humble-rosbag2-compression-zstd
+    - ros-humble-rosbag2-cpp
+    - ros-humble-rosbag2-interfaces
+    - ros-humble-rosbag2-storage
+    - ros-humble-rosbag2-test-common
+    - ros-humble-shared-queues-vendor
+    - ros-humble-test-msgs
+    - ros-humble-yaml-cpp-vendor
+    - ros2-distro-mutex 0.5 humble
+  run:
+    - python
+    - ros-humble-keyboard-handler
+    - ros-humble-rclcpp
+    - ros-humble-rmw
+    - ros-humble-ros-workspace
+    - ros-humble-rosbag2-compression
+    - ros-humble-rosbag2-cpp
+    - ros-humble-rosbag2-interfaces
+    - ros-humble-rosbag2-storage
+    - ros-humble-shared-queues-vendor
+    - ros-humble-yaml-cpp-vendor
+    - ros2-distro-mutex 0.5 humble
+    - if: osx and x86_64
+      then:
+        - __osx >=${{ MACOSX_DEPLOYMENT_TARGET|default('10.14') }}

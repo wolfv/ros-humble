@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+
+package:
+  name: ros-humble-tf2
+  version: 0.25.6
+source:
+  git: https://github.com/ros2-gbp/geometry2-release.git
+  rev: release/humble/tf2/0.25.6-1
+  target_directory: ros-humble-tf2/src/work
+
+build:
+  script: ${{ 'build_ament_cmake.sh' if unix else 'bld_ament_cmake.bat' }}
+  number: 5
+about:
+  homepage: https://www.ros.org/
+  license: BSD-3-Clause
+  summary: |
+    Robot Operating System
+
+extra:
+  recipe-maintainers:
+    - ros-forge
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ compiler('c') }}
+    - if: linux64
+      then:
+        - sysroot_linux-64 2.17
+    - ninja
+    - setuptools
+    - if: unix
+      then:
+        - make
+        - coreutils
+    - if: osx
+      then:
+        - tapi
+    - if: build_platform != target_platform
+      then:
+        - pkg-config
+    - cmake
+    - cython
+    - if: build_platform != target_platform
+      then:
+        - python
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+    - if: build_platform != target_platform
+      then:
+        - numpy
+  host:
+    - if: build_platform == target_platform
+      then:
+        - pkg-config
+    - console_bridge
+    - numpy
+    - pip
+    - python
+    - ros-humble-ament-cmake
+    - ros-humble-ament-cmake-copyright
+    - ros-humble-ament-cmake-cppcheck
+    - ros-humble-ament-cmake-cpplint
+    - ros-humble-ament-cmake-gtest
+    - ros-humble-ament-cmake-lint-cmake
+    - ros-humble-ament-cmake-uncrustify
+    - ros-humble-ament-cmake-xmllint
+    - ros-humble-builtin-interfaces
+    - ros-humble-console-bridge-vendor
+    - ros-humble-geometry-msgs
+    - ros-humble-rcutils
+    - ros-humble-ros-environment
+    - ros-humble-ros-workspace
+    - ros-humble-rosidl-runtime-cpp
+    - ros2-distro-mutex 0.5 humble
+  run:
+    - console_bridge
+    - python
+    - ros-humble-builtin-interfaces
+    - ros-humble-console-bridge-vendor
+    - ros-humble-geometry-msgs
+    - ros-humble-rcutils
+    - ros-humble-ros-workspace
+    - ros-humble-rosidl-runtime-cpp
+    - ros2-distro-mutex 0.5 humble
+    - if: osx and x86_64
+      then:
+        - __osx >=${{ MACOSX_DEPLOYMENT_TARGET|default('10.14') }}

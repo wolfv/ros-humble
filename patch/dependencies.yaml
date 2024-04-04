@@ -13,7 +13,7 @@ yaml_cpp_vendor:
   add_host: ["yaml-cpp"]
   add_run: ["yaml-cpp"]
 zstd_vendor:
-  add_host: ["zstd", {sel(not win): zstd-static}]
+  add_host: ["zstd", "zstd-static"]
   add_run: ["zstd"]
 sqlite3_vendor:
   add_host: ["sqlite"]

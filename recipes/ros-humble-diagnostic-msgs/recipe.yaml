@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+
+package:
+  name: ros-humble-diagnostic-msgs
+  version: 4.2.3
+source:
+  git: https://github.com/ros2-gbp/common_interfaces-release.git
+  rev: release/humble/diagnostic_msgs/4.2.3-1
+  target_directory: ros-humble-diagnostic-msgs/src/work
+
+build:
+  script: ${{ 'build_ament_cmake.sh' if unix else 'bld_ament_cmake.bat' }}
+  number: 5
+about:
+  homepage: https://www.ros.org/
+  license: BSD-3-Clause
+  summary: |
+    Robot Operating System
+
+extra:
+  recipe-maintainers:
+    - ros-forge
+
+requirements:
+  build:
+    - ${{ compiler('cxx') }}
+    - ${{ compiler('c') }}
+    - if: linux64
+      then:
+        - sysroot_linux-64 2.17
+    - ninja
+    - setuptools
+    - if: unix
+      then:
+        - make
+        - coreutils
+    - if: osx
+      then:
+        - tapi
+    - if: build_platform != target_platform
+      then:
+        - pkg-config
+    - cmake
+    - cython
+    - if: build_platform != target_platform
+      then:
+        - python
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+    - if: build_platform != target_platform
+      then:
+        - numpy
+  host:
+    - if: build_platform == target_platform
+      then:
+        - pkg-config
+    - numpy
+    - pip
+    - python
+    - ros-humble-ament-cmake
+    - ros-humble-ament-lint-common
+    - ros-humble-builtin-interfaces
+    - ros-humble-geometry-msgs
+    - ros-humble-ros-environment
+    - ros-humble-ros-workspace
+    - ros-humble-rosidl-default-generators
+    - ros-humble-std-msgs
+    - ros2-distro-mutex 0.5 humble
+  run:
+    - python
+    - ros-humble-builtin-interfaces
+    - ros-humble-geometry-msgs
+    - ros-humble-ros-workspace
+    - ros-humble-rosidl-default-runtime
+    - ros-humble-std-msgs
+    - ros2-distro-mutex 0.5 humble
+    - if: osx and x86_64
+      then:
+        - __osx >=${{ MACOSX_DEPLOYMENT_TARGET|default('10.14') }}
